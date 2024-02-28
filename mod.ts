@@ -24,7 +24,7 @@ export type Listener<A = any, R = any> = (
  * - https://www.freecodecamp.org/news/how-to-code-your-own-event-emitter-in-node-js-a-step-by-step-guide-e13b7e7908e1
  * - https://developer.wordpress.org/plugins/hooks
  */
-class PriorityEvent {
+export default class PriorityEvent {
    static #instance: PriorityEvent
    #ls: Map<keyof PriorityEventMap, [number, Listener][]>
 
@@ -54,7 +54,7 @@ class PriorityEvent {
       listener: Listener<ParamListener<N>, ReturnListener<N>>,
       priority = 10,
    ) {
-      const ls = this.#ls.get(name)!
+      const ls = this.#ls.get(name)
       if (!ls) return void 0
 
       for (let i = 0; i < ls.length; i++) {
@@ -105,12 +105,14 @@ class PriorityEvent {
    }
 
    lsEvents() {
-      return Array.from(this.#ls.keys())
+      return Array
+         .from(this.#ls.keys())
+         .filter((n) => this.#ls.get(n)?.length !== 0)
    }
 
    lsListeners(name: keyof PriorityEventMap) {
       if (!this.#ls.has(name)) return null
-      return Array.from(this.#ls.get(name)!.keys())
+      return Array.from(this.#ls.get(name)!.values())
    }
 
    static init() {

@@ -1,4 +1,11 @@
 {
+   // "compilerOptions": {
+   //    "types": ["./types.d.ts"]
+   // },
+   "imports": {
+      "test": "https://deno.land/std@0.217.0/assert/mod.ts",
+      "core": "./mod.ts"
+   },
    "fmt": {
       "indentWidth": 3,
       "lineWidth": 100,
@@ -10,8 +17,8 @@
    "lint": {
       "report": "pretty"
    },
-   "compilerOptions": {
-      // "types": ["./types.d.ts"]
+   "test": {
+      "exclude": ["examples/"]
    },
    "tasks": {
       "setup-git": "git config --local core.hooksPath .repo/"
