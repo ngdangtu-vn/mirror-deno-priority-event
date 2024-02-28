@@ -1,0 +1,19 @@
+{
+   "fmt": {
+      "indentWidth": 3,
+      "lineWidth": 100,
+      "proseWrap": "preserve",
+      "semiColons": false,
+      "singleQuote": true,
+      "useTabs": false
+   },
+   "lint": {
+      "report": "pretty"
+   },
+   "compilerOptions": {
+      // "types": ["./types.d.ts"]
+   },
+   "tasks": {
+      "setup-git": "git config --local core.hooksPath .repo/"
+   }
+}

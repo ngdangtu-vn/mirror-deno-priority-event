@@ -1,0 +1,33 @@
+#!/bin/sh
+# 
+# This hook creates a mirror repository to Github.
+# In other words, it send a copy from Gitlab to Github.
+# Reason behind this hook is to get into deno/x since
+# the host only support Github.
+#
+# pre-push hook is called by "git push" after it has checked
+# the remote status, but before anything has been pushed.
+# If this script exits with a non-zero status, nothing
+# will be pushed.
+# 
+# Credit
+# https://stackoverflow.com/a/22266000
+
+
+MIRROR=github-mirror
+GITHUB=git@github.com:ngdangtu-vn/mirror-deno-priority-event.git
+
+# pre-push.sample
+remote="$1"
+url="$2"
+
+# if the push is mirror type, we don't run this script
+test "$remote" = "$MIRROR" && exit 0
+
+# check if $MIRROR is created
+echo $(git remote show) | grep -q "$MIRROR" || git remote add --mirror=push "$MIRROR" "$GITHUB"
+
+# update mirror after the real push 
+git push --mirror "$MIRROR" --follow-tags
+
+exit 0
