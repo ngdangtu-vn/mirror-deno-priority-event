@@ -1,0 +1,11 @@
+image: denoland/deno:bin
+
+# Reference
+# https://docs.gitlab.com/ee/user/project/pages
+# https://docs.gitlab.com/ee/ci/yaml/index.html#job-keywords
+# https://docs.gitlab.com/ee/ci/jobs/job_artifacts.html
+
+test:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script: deno test
