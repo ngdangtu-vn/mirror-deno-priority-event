@@ -70,12 +70,12 @@ Deno.test('[class] PriorityEvent', async (t) => {
             [11, f404],
             [100, f404],
          ],
-         'expect the order of the listener list not change from the input',
+         'expect the listener list stays unsorted',
       )
    })
 
-   await t.step('listen "core/void-event" event after add all listerners', () => {
-      e.listenSync('core/void-event', undefined)
+   await t.step('emit "core/void-event"', () => {
+      e.emitSync('core/void-event', undefined)
       assertEquals<[number, Listener][] | null>(
          e.lsListeners('core/void-event'),
          [
@@ -91,7 +91,7 @@ Deno.test('[class] PriorityEvent', async (t) => {
 
    await t.step('listen "core/filter-event" event to receive new value', () => {
       e.addListener('core/filter-event', (n) => `#${n.toString(16).toUpperCase()}`)
-      const hex = e.listenSync('core/filter-event', 0x77DD77)!
+      const hex = e.emitSync('core/filter-event', 0x77DD77)!
       assertEquals(hex as unknown as string, '#77DD77')
    })
 })
@@ -143,6 +143,6 @@ Deno.test('[function] Listener', async (t) => {
          assertEquals(arg.toString(16).toLowerCase(), 'fff')
       }, 0)
 
-      e.listen('core/test-listener', 0xFFF)
+      e.emit('core/test-listener', 0xFFF)
    })
 })

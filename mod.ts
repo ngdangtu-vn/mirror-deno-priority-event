@@ -68,7 +68,7 @@ export default class PriorityEvent {
       }
    }
 
-   async listen<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>) {
+   async emit<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>) {
       const ls = this.#ls.get(name)
       if (!ls || ls.length === 0) return void 0
 
@@ -86,7 +86,7 @@ export default class PriorityEvent {
       return passable_result
    }
 
-   listenSync<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>) {
+   emitSync<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>) {
       const ls = this.#ls.get(name)
       if (!ls || ls.length === 0) return void 0
 
@@ -121,17 +121,17 @@ export default class PriorityEvent {
    }
 
    static async apply<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
-      await PriorityEvent.init().listen(name, argv)
+      await PriorityEvent.init().emit(name, argv)
    }
    static filter<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
-      return PriorityEvent.init().listen(name, argv)
+      return PriorityEvent.init().emit(name, argv)
    }
 
    static applySync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
-      PriorityEvent.init().listenSync(name, argv)
+      PriorityEvent.init().emitSync(name, argv)
    }
    static filterSync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
-      return PriorityEvent.init().listenSync(name, argv)
+      return PriorityEvent.init().emitSync(name, argv)
    }
 }
 
