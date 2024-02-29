@@ -57,8 +57,12 @@ More reference in [`examples/`](./examples/)
 
 ## Self-note
 
-To copy repo from Gitlab to Github, after clone this new repo, run this command:
+To copy repo from Gitlab to Github, after clone, run this command:
 
 ```shell
 git config --local core.hooksPath .repo/
 ```
+
+## Credit
+
+- "super easy barely an inconvenience" meme is proverbial catchphrase made by comedian Ryan George, [learn more](https://digitalcultures.net/slang/internet-culture/super-easy-barely-an-inconvenience/).
