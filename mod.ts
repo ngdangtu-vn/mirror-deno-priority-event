@@ -83,7 +83,8 @@ export default class PriorityEvent {
          ) as ParamListener<N> | null
          passable_result = result === undefined ? orig_argv : result
       }
-      return passable_result
+      // type ResultType = typeof passable_result extends ReturnListener<N> ? ReturnListener<N> : ParamListener<N>
+      return passable_result as unknown // unable to set conditional type
    }
 
    emitSync<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>) {
@@ -101,7 +102,7 @@ export default class PriorityEvent {
          ) as ParamListener<N> | null
          passable_result = result === undefined ? orig_argv : result
       }
-      return passable_result
+      return passable_result as unknown
    }
 
    lsEvents() {
