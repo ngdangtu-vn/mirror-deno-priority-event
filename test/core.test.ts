@@ -42,7 +42,7 @@ Deno.test('[class] PriorityEvent', async (t) => {
       ])
    })
 
-   await t.step('remove 5 events', () => {
+   await t.step('remove the listener of 5 events', () => {
       e.rmListener('deno/load', f404)
       e.rmListener('deno/beforeunload', f404)
       e.rmListener('deno/unload', f404)
