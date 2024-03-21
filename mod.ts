@@ -29,7 +29,7 @@ export default class PriorityEvent {
    #ls: Map<keyof PriorityEventMap, [number, Listener][]>
 
    private constructor() {
-      this.#ls = new Map()
+      this.#ls = new Map<keyof PriorityEventMap, [number, Listener][]>()
    }
 
    /**
@@ -39,7 +39,7 @@ export default class PriorityEvent {
       name: N,
       listener: Listener<ParamListener<N>, ReturnListener<N>>,
       priority = 10,
-   ) {
+   ): void {
       const has_ev = this.#ls.has(name)
       if (!has_ev) this.#ls.set(name, [])
 
@@ -53,7 +53,7 @@ export default class PriorityEvent {
       name: N,
       listener: Listener<ParamListener<N>, ReturnListener<N>>,
       priority = 10,
-   ) {
+   ): void {
       const ls = this.#ls.get(name)
       if (!ls) return void 0
 
@@ -68,7 +68,10 @@ export default class PriorityEvent {
       }
    }
 
-   async emit<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>) {
+   async emit<N extends keyof PriorityEventMap>(
+      name: N,
+      orig_argv: ParamListener<N>,
+   ): Promise<unknown> {
       const ls = this.#ls.get(name)
       if (!ls || ls.length === 0) return void 0
 
@@ -87,7 +90,7 @@ export default class PriorityEvent {
       return passable_result as unknown // unable to set conditional type
    }
 
-   emitSync<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>) {
+   emitSync<N extends keyof PriorityEventMap>(name: N, orig_argv: ParamListener<N>): unknown {
       const ls = this.#ls.get(name)
       if (!ls || ls.length === 0) return void 0
 
@@ -102,36 +105,44 @@ export default class PriorityEvent {
          ) as ParamListener<N> | null
          passable_result = result === undefined ? orig_argv : result
       }
-      return passable_result as unknown
+      return passable_result
    }
 
-   lsEvents() {
+   lsEvents(): (keyof PriorityEventMap)[] {
       return Array
          .from(this.#ls.keys())
          .filter((n) => this.#ls.get(n)?.length !== 0)
    }
 
-   lsListeners(name: keyof PriorityEventMap) {
+   lsListeners<K extends keyof PriorityEventMap>(
+      name: K,
+   ): null | [number, Listener<K, unknown>][] {
       if (!this.#ls.has(name)) return null
       return Array.from(this.#ls.get(name)!.values())
    }
 
-   static init() {
+   static init(): PriorityEvent {
       PriorityEvent.#instance ??= new PriorityEvent()
       return PriorityEvent.#instance
    }
 
-   static async apply<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+   static async apply<N extends keyof PriorityEventMap>(
+      name: N,
+      argv: ParamListener<N>,
+   ): Promise<void> {
       await PriorityEvent.init().emit(name, argv)
    }
-   static filter<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+   static filter<N extends keyof PriorityEventMap>(
+      name: N,
+      argv: ParamListener<N>,
+   ): Promise<unknown> {
       return PriorityEvent.init().emit(name, argv)
    }
 
-   static applySync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+   static applySync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>): void {
       PriorityEvent.init().emitSync(name, argv)
    }
-   static filterSync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+   static filterSync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>): unknown {
       return PriorityEvent.init().emitSync(name, argv)
    }
 }
@@ -147,7 +158,7 @@ export function on<N extends keyof PriorityEventMap>(
    name: N,
    listener: Listener<ParamListener<N>, ReturnListener<N>>,
    priority = 10,
-) {
+): void {
    PriorityEvent.init().addListener(name, listener, priority)
 }
 
@@ -165,7 +176,7 @@ export function off<N extends keyof PriorityEventMap>(
    name: N,
    listener: Listener<ParamListener<N>, ReturnListener<N>>,
    priority = 10,
-) {
+): void {
    PriorityEvent.init().rmListener(name, listener, priority)
 }
 
@@ -173,7 +184,10 @@ export function off<N extends keyof PriorityEventMap>(
  * @param name Event name
  * @param argv Listener parameter
  */
-export async function apply<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+export async function apply<N extends keyof PriorityEventMap>(
+   name: N,
+   argv: ParamListener<N>,
+): Promise<void> {
    await PriorityEvent.apply(name, argv)
 }
 
@@ -182,7 +196,10 @@ export async function apply<N extends keyof PriorityEventMap>(name: N, argv: Par
  * @param argv Listener parameter
  * @returns { Promise<ReturnListener | ParamListener | null | undefined> }
  */
-export function filter<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+export function filter<N extends keyof PriorityEventMap>(
+   name: N,
+   argv: ParamListener<N>,
+): Promise<unknown> {
    return PriorityEvent.filter(name, argv)
 }
 
@@ -192,7 +209,10 @@ export function filter<N extends keyof PriorityEventMap>(name: N, argv: ParamLis
  * @param name Event name
  * @param argv Listener parameter
  */
-export function applySync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+export function applySync<N extends keyof PriorityEventMap>(
+   name: N,
+   argv: ParamListener<N>,
+): void {
    PriorityEvent.applySync(name, argv)
 }
 
@@ -203,6 +223,9 @@ export function applySync<N extends keyof PriorityEventMap>(name: N, argv: Param
  * @param argv Listener parameter
  * @returns { ReturnListener | ParamListener | null | undefined }
  */
-export function filterSync<N extends keyof PriorityEventMap>(name: N, argv: ParamListener<N>) {
+export function filterSync<N extends keyof PriorityEventMap>(
+   name: N,
+   argv: ParamListener<N>,
+): unknown {
    return PriorityEvent.filterSync(name, argv)
 }
